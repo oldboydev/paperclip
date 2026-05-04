@@ -446,7 +446,7 @@ export function MarkdownBody({
   return (
     <div
       className={cn(
-        "paperclip-markdown prose prose-sm min-w-0 max-w-full break-words overflow-hidden",
+        "paperclip-markdown prose prose-sm min-w-0 max-w-none break-words overflow-hidden",
         theme === "dark" && "prose-invert",
         className,
       )}

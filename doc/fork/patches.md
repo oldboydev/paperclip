@@ -7,6 +7,10 @@ If pulling from upstream, these must be re-applied.
 
 ## UI Patches (existing)
 
+### issue_fluid_width
+- **Files**: `IssueDetail.tsx`, `MarkdownBody.tsx`
+- **What**: Replaces hardcoded `max-w-3xl` with `w-full max-w-none` in the issue view container, and uses `max-w-none` on MarkdownBody to override the `.prose` 65ch limit, so the issue view uses the available screen width fully.
+
 ### stderr_group
 - **Files**: `RunTranscriptView.tsx`
 - **What**: Amber accordion for MCP init noise in transcript view
