@@ -27,9 +27,13 @@ export function parseClaudeStreamJson(stdout: string) {
     if (!event) continue;
 
     const type = asString(event.type, "");
-    if (type === "system" && asString(event.subtype, "") === "init") {
-      sessionId = asString(event.session_id, sessionId ?? "") || sessionId;
-      model = asString(event.model, model);
+    if (type === "system") {
+      const subtype = asString(event.subtype, "");
+      if (subtype === "init") {
+        sessionId = asString(event.session_id, sessionId ?? "") || sessionId;
+        model = asString(event.model, model);
+      }
+      // Skip all other system events (e.g. hook_started, hook_response)
       continue;
     }
 
