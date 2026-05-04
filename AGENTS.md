@@ -201,11 +201,19 @@ This is a fork of `paperclipai/paperclip` with QoL patches and an **external-onl
 
 ### Fork QoL Patches (not in upstream)
 
-These are local modifications in the fork's UI. If re-copying source, these must be re-applied:
+These are local modifications in the fork. See `doc/fork/patches.md` for the full registry of fork-specific patches.
+If re-copying source, these must be re-applied:
 
 1. **stderr_group** — amber accordion for MCP init noise in `RunTranscriptView.tsx`
 2. **tool_group** — accordion for consecutive non-terminal tools (write, read, search, browser)
 3. **Dashboard excerpt** — `LatestRunCard` strips markdown, shows first 3 lines/280 chars
+
+### Fork Development Workflow
+
+When AI agents implement improvements or fixes specific to this fork, you MUST follow this structure:
+1. **Plan**: Create the implementation plan at `doc/fork/plans/YYYY-MM-DD-slug.md`.
+2. **Registry**: Register the patch and its status in `doc/fork/patches.md`.
+3. **Walkthrough**: After resolving the plan and verifying the work, ALWAYS save a walkthrough document summarizing the changes at `doc/fork/walkthroughs/YYYY-MM-DD-slug.md` (using the exact same filename as the plan). Do not leave the walkthrough only in your internal ephemeral state.
 
 ### Plugin System
 

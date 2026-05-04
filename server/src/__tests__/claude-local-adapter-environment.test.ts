@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { testEnvironment } from "@paperclipai/adapter-claude-local/server";
+import { testEnvironment, parseClaudeStreamJson } from "@paperclipai/adapter-claude-local/server";
 
 const ORIGINAL_ANTHROPIC = process.env.ANTHROPIC_API_KEY;
 const ORIGINAL_BEDROCK = process.env.CLAUDE_CODE_USE_BEDROCK;
@@ -217,5 +217,39 @@ describe("claude_local environment diagnostics", () => {
       ),
     ).toBe(true);
     expect(result.checks.some((check) => check.code === "claude_cwd_invalid")).toBe(false);
+  });
+});
+
+describe("parseClaudeStreamJson", () => {
+  it("parses output correctly when SessionStart hooks are present", () => {
+    const stdout = [
+      '{"type":"system","subtype":"hook_started","hook_id":"some-id","hook_name":"SessionStart:startup","hook_event":"SessionStart"}',
+      '{"type":"system","subtype":"hook_response","hook_event":"SessionStart","output":"...","stdout":"...","exit_code":0,"outcome":"success"}',
+      '{"type":"system","subtype":"init","session_id":"test-session-id","model":"test-model"}',
+      '{"type":"assistant","message":{"content":[{"type":"text","text":"Hello!"}]}}',
+      '{"type":"result","subtype":"success","result":"Hello!"}',
+    ].join("\n");
+
+    const result = parseClaudeStreamJson(stdout);
+    expect(result.sessionId).toBe("test-session-id");
+    expect(result.model).toBe("test-model");
+    expect(result.summary).toBe("Hello!");
+    expect(result.resultJson).not.toBeNull();
+    expect(result.resultJson?.subtype).toBe("success");
+  });
+
+  it("parses output correctly even if a hook fails", () => {
+    const stdout = [
+      '{"type":"system","subtype":"hook_started","hook_id":"some-id","hook_name":"SessionStart:startup","hook_event":"SessionStart"}',
+      '{"type":"system","subtype":"hook_response","hook_event":"SessionStart","output":"hook failed","stdout":"","exit_code":1,"outcome":"error"}',
+      '{"type":"system","subtype":"init","session_id":"test-session-id-2","model":"test-model"}',
+      '{"type":"assistant","message":{"content":[{"type":"text","text":"Hello despite hook failure!"}]}}',
+      '{"type":"result","subtype":"success","result":"Hello despite hook failure!"}',
+    ].join("\n");
+
+    const result = parseClaudeStreamJson(stdout);
+    expect(result.sessionId).toBe("test-session-id-2");
+    expect(result.summary).toBe("Hello despite hook failure!");
+    expect(result.resultJson).not.toBeNull();
   });
 });
