@@ -47,3 +47,14 @@ If pulling from upstream, these must be re-applied.
 - **What**: `runChildProcess()` now strips **all** `CLAUDE_CODE_*` env vars (prefix match) instead of a hardcoded list of 4
 - **Why**: When `pnpm dev` runs inside a Claude Code terminal, `CLAUDE_CODE_SSE_PORT` leaks into child processes, making the Claude CLI silently exit with code 1
 
+---
+
+## 2026-05-05 — Fix skill import GitHub URL bugs
+
+- **Plan**: N/A (One-off fix)
+- **Status**: Completed
+- **Walkthrough**: [doc/fork/walkthroughs/2026-05-05-fix-skill-import-github-url-bugs.md](walkthroughs/2026-05-05-fix-skill-import-github-url-bugs.md)
+- **Files**:
+  - `server/src/services/company-skills.ts`
+- **What**: Fixed URL-encoded GitHub path parsing and missing file inventory for skills imported from root.
+- **Why**: Skills with parentheses in URLs or files inside nested directories like `references/` were failing to import correctly via the Paperclip UI.
