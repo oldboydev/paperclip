@@ -35,3 +35,15 @@ If pulling from upstream, these must be re-applied.
   - `server/src/__tests__/claude-local-adapter-environment.test.ts`
 - **What**: Parser now skips unknown `system` events (`hook_started`, `hook_response`) in Claude stream-json output
 - **Why**: Probe failed for users with Claude plugins that register `SessionStart` hooks
+
+---
+
+## 2026-05-05 — Fix Claude probe with inherited nesting env vars
+
+- **Plan**: [doc/fork/plans/2026-05-05-fix-claude-probe-nesting-env.md](plans/2026-05-05-fix-claude-probe-nesting-env.md)
+- **Status**: Completed
+- **Files**:
+  - `packages/adapter-utils/src/server-utils.ts`
+- **What**: `runChildProcess()` now strips **all** `CLAUDE_CODE_*` env vars (prefix match) instead of a hardcoded list of 4
+- **Why**: When `pnpm dev` runs inside a Claude Code terminal, `CLAUDE_CODE_SSE_PORT` leaks into child processes, making the Claude CLI silently exit with code 1
+
