@@ -1806,14 +1806,11 @@ export async function runChildProcess(
     // These vars leak in when the Paperclip server itself is started from
     // within a Claude Code session (e.g. `npx paperclipai run` in a terminal
     // owned by Claude Code) or when cron inherits a contaminated shell env.
-    const CLAUDE_CODE_NESTING_VARS = [
-      "CLAUDECODE",
-      "CLAUDE_CODE_ENTRYPOINT",
-      "CLAUDE_CODE_SESSION",
-      "CLAUDE_CODE_PARENT_SESSION",
-    ] as const;
-    for (const key of CLAUDE_CODE_NESTING_VARS) {
-      delete rawMerged[key];
+    // Use a prefix match for CLAUDE_CODE_* to future-proof against new vars.
+    for (const key of Object.keys(rawMerged)) {
+      if (key === "CLAUDECODE" || key.startsWith("CLAUDE_CODE_")) {
+        delete rawMerged[key];
+      }
     }
 
     const mergedEnv = ensurePathInEnv(rawMerged);

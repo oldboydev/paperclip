@@ -38,6 +38,17 @@ If pulling from upstream, these must be re-applied.
 
 ---
 
+## 2026-05-05 — Fix Claude probe with inherited nesting env vars
+
+- **Plan**: [doc/fork/plans/2026-05-05-fix-claude-probe-nesting-env.md](plans/2026-05-05-fix-claude-probe-nesting-env.md)
+- **Status**: Completed
+- **Files**:
+  - `packages/adapter-utils/src/server-utils.ts`
+- **What**: `runChildProcess()` now strips **all** `CLAUDE_CODE_*` env vars (prefix match) instead of a hardcoded list of 4
+- **Why**: When `pnpm dev` runs inside a Claude Code terminal, `CLAUDE_CODE_SSE_PORT` leaks into child processes, making the Claude CLI silently exit with code 1
+
+---
+
 ## 2026-05-05 — Fix skill import GitHub URL bugs
 
 - **Plan**: N/A (One-off fix)
