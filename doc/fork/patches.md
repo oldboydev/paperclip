@@ -35,3 +35,15 @@ If pulling from upstream, these must be re-applied.
   - `server/src/__tests__/claude-local-adapter-environment.test.ts`
 - **What**: Parser now skips unknown `system` events (`hook_started`, `hook_response`) in Claude stream-json output
 - **Why**: Probe failed for users with Claude plugins that register `SessionStart` hooks
+
+---
+
+## 2026-05-05 — Fix skill import GitHub URL bugs
+
+- **Plan**: N/A (One-off fix)
+- **Status**: Completed
+- **Walkthrough**: [doc/fork/walkthroughs/2026-05-05-fix-skill-import-github-url-bugs.md](walkthroughs/2026-05-05-fix-skill-import-github-url-bugs.md)
+- **Files**:
+  - `server/src/services/company-skills.ts`
+- **What**: Fixed URL-encoded GitHub path parsing and missing file inventory for skills imported from root.
+- **Why**: Skills with parentheses in URLs or files inside nested directories like `references/` were failing to import correctly via the Paperclip UI.

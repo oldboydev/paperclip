@@ -595,12 +595,12 @@ function parseGitHubSourceUrl(rawUrl: string) {
   let filePath: string | null = null;
   let explicitRef = false;
   if (parts[2] === "tree") {
-    ref = parts[3] ?? "main";
-    basePath = parts.slice(4).join("/");
+    ref = decodeURIComponent(parts[3] ?? "main");
+    basePath = decodeURIComponent(parts.slice(4).join("/"));
     explicitRef = true;
   } else if (parts[2] === "blob") {
-    ref = parts[3] ?? "main";
-    filePath = parts.slice(4).join("/");
+    ref = decodeURIComponent(parts[3] ?? "main");
+    filePath = decodeURIComponent(parts.slice(4).join("/"));
     basePath = filePath ? path.posix.dirname(filePath) : "";
     explicitRef = true;
   }
@@ -1118,12 +1118,16 @@ async function readUrlSkillImports(
           slug,
         ),
       };
+      const skillDirPrefix = skillDir === "." ? "" : `${skillDir}/`;
       const inventory = filteredPaths
-        .filter((entry) => entry === relativeSkillPath || entry.startsWith(`${skillDir}/`))
-        .map((entry) => ({
-          path: entry === relativeSkillPath ? "SKILL.md" : entry.slice(skillDir.length + 1),
-          kind: classifyInventoryKind(entry === relativeSkillPath ? "SKILL.md" : entry.slice(skillDir.length + 1)),
-        }))
+        .filter((entry) => entry === relativeSkillPath || (skillDirPrefix === "" ? entry !== "" : entry.startsWith(skillDirPrefix)))
+        .map((entry) => {
+          const relativeToSkill = entry === relativeSkillPath ? "SKILL.md" : entry.slice(skillDirPrefix.length);
+          return {
+            path: relativeToSkill,
+            kind: classifyInventoryKind(relativeToSkill),
+          };
+        })
         .sort((left, right) => left.path.localeCompare(right.path));
       skills.push({
         key: deriveCanonicalSkillKey(companyId, {
